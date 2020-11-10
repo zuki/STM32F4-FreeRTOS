@@ -41,7 +41,9 @@
 #include <sys/types.h>
 
 #include "stdio.h"
-#include "stm32f4xx_usart.h"
+#include "stm32f4xx_hal_conf.h"
+
+extern USART_HandleTypeDef husart2;   // in main.c
 
 /***************************************************************************/
 
@@ -68,15 +70,10 @@ int _lseek(int file, int ptr, int dir) {
 /***************************************************************************/
 
 int _write(int file, char * ptr, int len) {
-  int index;
-  if (!ptr) {
+  if (HAL_USART_Transmit(&husart2, (uint8_t *)ptr, len, 0) == HAL_OK)
+    return len;
+  else
     return 0;
-  }
-  for (index = 0; index < len; index++) {
-    while (!(USART3->SR & 0x00000040));
-    USART_SendData(USART3, ptr[index]);
-  }
-  return len;
 }
 
 /***************************************************************************/

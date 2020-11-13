@@ -21,3 +21,5 @@
 *.map
 
 .DS_Store
+
+fatfs_usb/*

@@ -9,10 +9,10 @@ OPTLVL:=0
 DBG:=-g
 
 FREERTOS:=$(CURDIR)/FreeRTOS
-STARTUP:=$(CURDIR)/hardware
+STARTUP:=$(CURDIR)/src
 LINKER_SCRIPT:=$(CURDIR)/Utilities/stm32_flash.ld
 
-INCLUDE=-I$(CURDIR)/hardware
+INCLUDE=-I$(CURDIR)/include
 INCLUDE+=-I$(CURDIR)/config
 INCLUDE+=-I$(FREERTOS)/include
 INCLUDE+=-I$(FREERTOS)/portable/GCC/ARM_CM4F
@@ -28,7 +28,7 @@ BIN_DIR = $(CURDIR)/binary
 # オブジェクトファイルをソースファイルと同じディレクトリではなくカレントディレクトリに
 # 書き込むためにvpathを使用する
 vpath %.c $(CURDIR)/Libraries/STM32F4xx_HAL_Driver/Src \
-	$(CURDIR)/Libraries/syscall $(CURDIR)/hardware $(FREERTOS) \
+	$(CURDIR)/Libraries/syscall $(CURDIR)/src $(FREERTOS) \
 	$(FREERTOS)/portable/MemMang $(FREERTOS)/portable/GCC/ARM_CM4F 
 
 vpath %.s $(STARTUP)

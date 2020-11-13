@@ -43,7 +43,8 @@
 #include "stdio.h"
 #include "stm32f4xx_hal_conf.h"
 
-extern USART_HandleTypeDef husart2;   // in main.c
+extern int __io_putchar(int ch) __attribute__((weak));
+extern int __io_getchar(void) __attribute__((weak));
 
 /***************************************************************************/
 
@@ -52,10 +53,14 @@ int _open(const char *name, int flags, int mode){
 }
 
 int _read(int file, char * ptr, int len) {
-  ptr = ptr;
-  len = len;
-  errno = EINVAL;
-  return -1;
+    int DataIdx;
+
+    for (DataIdx = 0; DataIdx < len; DataIdx++)
+    {
+        *ptr++ = __io_getchar();
+    }
+
+    return len;
 }
 
 /***************************************************************************/
@@ -70,10 +75,13 @@ int _lseek(int file, int ptr, int dir) {
 /***************************************************************************/
 
 int _write(int file, char * ptr, int len) {
-  if (HAL_USART_Transmit(&husart2, (uint8_t *)ptr, len, 0) == HAL_OK)
+    int DataIdx;
+
+    for (DataIdx = 0; DataIdx < len; DataIdx++)
+    {
+        __io_putchar(*ptr++);
+    }
     return len;
-  else
-    return 0;
 }
 
 /***************************************************************************/

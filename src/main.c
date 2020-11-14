@@ -36,6 +36,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx.h"
+#include "stm32f4_discovery.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include <stdio.h>
@@ -51,7 +52,6 @@ UART_HandleTypeDef huart2;
 //uint32_t interval = 1000;
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
-static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void Error_Handler(void);
 void pvTask1Func(void *argument);
@@ -93,7 +93,11 @@ int main(void)
 
     /* Configure the system clock to 168 MHz */
     SystemClock_Config();
-    MX_GPIO_Init();
+    //MX_GPIO_Init();
+    BSP_LED_Init(LED4);
+    BSP_LED_Init(LED3);
+    BSP_LED_Init(LED5);
+    BSP_LED_Init(LED6);
     MX_USART2_UART_Init();
 
     /* Add your application code here */
@@ -190,7 +194,7 @@ void pvTask1Func(void * argument)
     /* Infinite loop */
     for(;;)
     {
-        HAL_GPIO_TogglePin(LED5_GPIO_PORT, LED5_PIN);
+        BSP_LED_Toggle(LED5);
         //printf("task1 run\r\n");
         vTaskDelay(1000/portTICK_RATE_MS);
     }
@@ -204,7 +208,7 @@ void pvTask2Func(void * argument)
     /* Infinite loop */
     for(;;)
     {
-        HAL_GPIO_TogglePin(LED4_GPIO_PORT, LED4_PIN);
+        BSP_LED_Toggle(LED4);
         //printf("task2 run\r\n");
         vTaskDelay(500/portTICK_RATE_MS);
     }
@@ -240,28 +244,6 @@ static void MX_USART2_UART_Init(void)
     /* USER CODE END USART2_Init 2 */
 }
 
-/**
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_GPIO_Init(void)
-{
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
-
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOD_CLK_ENABLE();
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, LED4_PIN|LED3_PIN|LED5_PIN|LED6_PIN, GPIO_PIN_RESET);
-
-  /*Configure GPIO pins : LED4_PIN LED3_PIN LED5_PIN LED6_PIN  */
-  GPIO_InitStruct.Pin = LED4_PIN|LED3_PIN|LED5_PIN|LED6_PIN;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
-}
 /**
   * @brief  This function is executed in case of error occurrence.
   * @param  None

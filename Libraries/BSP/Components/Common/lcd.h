@@ -1,13 +1,14 @@
 /**
   ******************************************************************************
-  * @file    stm32f4_discovery_accelerometer.h
+  * @file    lcd.h
   * @author  MCD Application Team
-  * @brief   This file contains all the functions prototypes for the
-  *          stm32f4_discovery_accelerometer.c firmware driver.
+  * @version V4.0.1
+  * @date    21-July-2015
+  * @brief   This file contains all the functions prototypes for the LCD driver.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2015 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -35,54 +36,58 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F4_DISCOVERY_ACCELEROMETER_H
-#define __STM32F4_DISCOVERY_ACCELEROMETER_H
+#ifndef __LCD_H
+#define __LCD_H
 
 #ifdef __cplusplus
  extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4_discovery.h"
-
-/* Include Accelerometer component drivers */
-#include "../Components/lis3dsh/lis3dsh.h"
+#include <stdint.h>
 
 /** @addtogroup BSP
   * @{
   */
 
-/** @addtogroup STM32F4_DISCOVERY
+/** @addtogroup Components
   * @{
   */
 
-/** @addtogroup STM32F4_DISCOVERY_ACCELEROMETER
+/** @addtogroup LCD
   * @{
   */
 
-/** @defgroup STM32F4_DISCOVERY_ACCELEROMETER_Exported_Types STM32F4 DISCOVERY ACCELEROMETER Exported Types
+/** @defgroup LCD_Exported_Types
   * @{
   */
-typedef enum
+
+/** @defgroup LCD_Driver_structure  LCD Driver structure
+  * @{
+  */
+typedef struct
 {
-    ACCELERO_OK = 0,
-    ACCELERO_ERROR = 1,
-    ACCELERO_TIMEOUT = 2
-} ACCELERO_StatusTypeDef;
+  void     (*Init)(void);
+  uint16_t (*ReadID)(void);
+  void     (*DisplayOn)(void);
+  void     (*DisplayOff)(void);
+  void     (*SetCursor)(uint16_t, uint16_t);
+  void     (*WritePixel)(uint16_t, uint16_t, uint16_t);
+  uint16_t (*ReadPixel)(uint16_t, uint16_t);
+
+   /* Optimized operation */
+  void     (*SetDisplayWindow)(uint16_t, uint16_t, uint16_t, uint16_t);
+  void     (*DrawHLine)(uint16_t, uint16_t, uint16_t, uint16_t);
+  void     (*DrawVLine)(uint16_t, uint16_t, uint16_t, uint16_t);
+
+  uint16_t (*GetLcdPixelWidth)(void);
+  uint16_t (*GetLcdPixelHeight)(void);
+  void     (*DrawBitmap)(uint16_t, uint16_t, uint8_t*);
+  void     (*DrawRGBImage)(uint16_t, uint16_t, uint16_t, uint16_t, uint8_t*);
+}LCD_DrvTypeDef;
 /**
   * @}
   */
-
-/** @defgroup STM32F4_DISCOVERY_ACCELEROMETER_Exported_Functions STM32F4 DISCOVERY ACCELEROMETER Exported Functions
-  * @{
-  */
-/* Accelerometer functions */
-uint8_t BSP_ACCELERO_Init(void);
-uint8_t BSP_ACCELERO_ReadID(void);
-void    BSP_ACCELERO_Reset(void);
-void    BSP_ACCELERO_Click_ITConfig(void);
-void    BSP_ACCELERO_Click_ITClear(void);
-void    BSP_ACCELERO_GetXYZ(int16_t *pDataXYZ);
 
 /**
   * @}
@@ -104,6 +109,6 @@ void    BSP_ACCELERO_GetXYZ(int16_t *pDataXYZ);
 }
 #endif
 
-#endif /* __STM32F4_DISCOVERY_ACCELEROMETER_H */
+#endif /* __LCD_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

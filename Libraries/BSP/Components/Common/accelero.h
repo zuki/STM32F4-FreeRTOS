@@ -1,13 +1,14 @@
 /**
   ******************************************************************************
-  * @file    stm32f4_discovery_accelerometer.h
+  * @file    accelero.h
   * @author  MCD Application Team
-  * @brief   This file contains all the functions prototypes for the
-  *          stm32f4_discovery_accelerometer.c firmware driver.
+  * @version V4.0.1
+  * @date    21-July-2015
+  * @brief   This header file contains the functions prototypes for the Accelerometer driver.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2015 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -35,54 +36,87 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F4_DISCOVERY_ACCELEROMETER_H
-#define __STM32F4_DISCOVERY_ACCELEROMETER_H
+#ifndef __ACCELERO_H
+#define __ACCELERO_H
 
 #ifdef __cplusplus
  extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4_discovery.h"
-
-/* Include Accelerometer component drivers */
-#include "../Components/lis3dsh/lis3dsh.h"
+#include <stdint.h>
 
 /** @addtogroup BSP
   * @{
   */
 
-/** @addtogroup STM32F4_DISCOVERY
+/** @addtogroup Components
   * @{
   */
 
-/** @addtogroup STM32F4_DISCOVERY_ACCELEROMETER
+/** @addtogroup ACCELERO
   * @{
   */
 
-/** @defgroup STM32F4_DISCOVERY_ACCELEROMETER_Exported_Types STM32F4 DISCOVERY ACCELEROMETER Exported Types
+/** @defgroup ACCELERO_Exported_Types
   * @{
   */
-typedef enum
+
+/** @defgroup ACCELERO_Driver_structure  Accelerometer Driver structure
+  * @{
+  */
+typedef struct
 {
-    ACCELERO_OK = 0,
-    ACCELERO_ERROR = 1,
-    ACCELERO_TIMEOUT = 2
-} ACCELERO_StatusTypeDef;
+  void      (*Init)(uint16_t);
+  void      (*DeInit)(void);
+  uint8_t   (*ReadID)(void);
+  void      (*Reset)(void);
+  void      (*LowPower)(void);
+  void      (*ConfigIT)(void);
+  void      (*EnableIT)(uint8_t);
+  void      (*DisableIT)(uint8_t);
+  uint8_t   (*ITStatus)(uint16_t);
+  void      (*ClearIT)(void);
+  void      (*FilterConfig)(uint8_t);
+  void      (*FilterCmd)(uint8_t);
+  void      (*GetXYZ)(int16_t *);
+}ACCELERO_DrvTypeDef;
 /**
   * @}
   */
 
-/** @defgroup STM32F4_DISCOVERY_ACCELEROMETER_Exported_Functions STM32F4 DISCOVERY ACCELEROMETER Exported Functions
+/** @defgroup ACCELERO_Configuration_structure  Accelerometer Configuration structure
   * @{
   */
-/* Accelerometer functions */
-uint8_t BSP_ACCELERO_Init(void);
-uint8_t BSP_ACCELERO_ReadID(void);
-void    BSP_ACCELERO_Reset(void);
-void    BSP_ACCELERO_Click_ITConfig(void);
-void    BSP_ACCELERO_Click_ITClear(void);
-void    BSP_ACCELERO_GetXYZ(int16_t *pDataXYZ);
+
+/* ACCELERO struct */
+typedef struct
+{
+  uint8_t Power_Mode;                         /* Power-down/Normal Mode */
+  uint8_t AccOutput_DataRate;                 /* OUT data rate */
+  uint8_t Axes_Enable;                        /* Axes enable */
+  uint8_t High_Resolution;                    /* High Resolution enabling/disabling */
+  uint8_t BlockData_Update;                   /* Block Data Update */
+  uint8_t Endianness;                         /* Endian Data selection */
+  uint8_t AccFull_Scale;                      /* Full Scale selection */
+  uint8_t Communication_Mode;
+}ACCELERO_InitTypeDef;
+
+/* ACCELERO High Pass Filter struct */
+typedef struct
+{
+  uint8_t HighPassFilter_Mode_Selection;      /* Internal filter mode */
+  uint8_t HighPassFilter_CutOff_Frequency;    /* High pass filter cut-off frequency */
+  uint8_t HighPassFilter_AOI1;                /* HPF_enabling/disabling for AOI function on interrupt 1 */
+  uint8_t HighPassFilter_AOI2;                /* HPF_enabling/disabling for AOI function on interrupt 2 */
+  uint8_t HighPassFilter_Data_Sel;
+  uint8_t HighPassFilter_Stat;
+}ACCELERO_FilterConfigTypeDef;
+
+/**
+  * @}
+  */
+
 
 /**
   * @}
@@ -104,6 +138,6 @@ void    BSP_ACCELERO_GetXYZ(int16_t *pDataXYZ);
 }
 #endif
 
-#endif /* __STM32F4_DISCOVERY_ACCELEROMETER_H */
+#endif /* __ACCELERO_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

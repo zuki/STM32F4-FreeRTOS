@@ -1,13 +1,15 @@
 /**
   ******************************************************************************
-  * @file    stm32f4_discovery_accelerometer.h
+  * @file    audio.h
   * @author  MCD Application Team
-  * @brief   This file contains all the functions prototypes for the
-  *          stm32f4_discovery_accelerometer.c firmware driver.
+  * @version V4.0.1
+  * @date    21-July-2015
+  * @brief   This header file contains the common defines and functions prototypes
+  *          for the Audio driver.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2015 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -35,54 +37,65 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F4_DISCOVERY_ACCELEROMETER_H
-#define __STM32F4_DISCOVERY_ACCELEROMETER_H
+#ifndef __AUDIO_H
+#define __AUDIO_H
 
 #ifdef __cplusplus
  extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4_discovery.h"
-
-/* Include Accelerometer component drivers */
-#include "../Components/lis3dsh/lis3dsh.h"
+#include <stdint.h>
 
 /** @addtogroup BSP
   * @{
   */
 
-/** @addtogroup STM32F4_DISCOVERY
+/** @addtogroup Components
   * @{
   */
 
-/** @addtogroup STM32F4_DISCOVERY_ACCELEROMETER
+/** @addtogroup AUDIO
   * @{
   */
 
-/** @defgroup STM32F4_DISCOVERY_ACCELEROMETER_Exported_Types STM32F4 DISCOVERY ACCELEROMETER Exported Types
+/** @defgroup AUDIO_Exported_Constants
   * @{
   */
-typedef enum
-{
-    ACCELERO_OK = 0,
-    ACCELERO_ERROR = 1,
-    ACCELERO_TIMEOUT = 2
-} ACCELERO_StatusTypeDef;
+
+/* Codec audio Standards */
+#define CODEC_STANDARD                0x04
+#define I2S_STANDARD                  I2S_STANDARD_PHILIPS
+
 /**
   * @}
   */
 
-/** @defgroup STM32F4_DISCOVERY_ACCELEROMETER_Exported_Functions STM32F4 DISCOVERY ACCELEROMETER Exported Functions
+/** @defgroup AUDIO_Exported_Types
   * @{
   */
-/* Accelerometer functions */
-uint8_t BSP_ACCELERO_Init(void);
-uint8_t BSP_ACCELERO_ReadID(void);
-void    BSP_ACCELERO_Reset(void);
-void    BSP_ACCELERO_Click_ITConfig(void);
-void    BSP_ACCELERO_Click_ITClear(void);
-void    BSP_ACCELERO_GetXYZ(int16_t *pDataXYZ);
+
+/** @defgroup AUDIO_Driver_structure  Audio Driver structure
+  * @{
+  */
+typedef struct
+{
+  uint32_t  (*Init)(uint16_t, uint16_t, uint8_t, uint32_t);
+  void      (*DeInit)(void);
+  uint32_t  (*ReadID)(uint16_t);
+  uint32_t  (*Play)(uint16_t, uint16_t*, uint16_t);
+  uint32_t  (*Pause)(uint16_t);
+  uint32_t  (*Resume)(uint16_t);
+  uint32_t  (*Stop)(uint16_t, uint32_t);
+  uint32_t  (*SetFrequency)(uint16_t, uint32_t);
+  uint32_t  (*SetVolume)(uint16_t, uint8_t);
+  uint32_t  (*SetMute)(uint16_t, uint32_t);
+  uint32_t  (*SetOutputMode)(uint16_t, uint8_t);
+  uint32_t  (*Reset)(uint16_t);
+}AUDIO_DrvTypeDef;
+/**
+  * @}
+  */
 
 /**
   * @}
@@ -104,6 +117,6 @@ void    BSP_ACCELERO_GetXYZ(int16_t *pDataXYZ);
 }
 #endif
 
-#endif /* __STM32F4_DISCOVERY_ACCELEROMETER_H */
+#endif /* __AUDIO_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

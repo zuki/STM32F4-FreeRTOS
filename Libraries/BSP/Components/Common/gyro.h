@@ -1,13 +1,14 @@
 /**
   ******************************************************************************
-  * @file    stm32f4_discovery_accelerometer.h
+  * @file    gyro.h
   * @author  MCD Application Team
-  * @brief   This file contains all the functions prototypes for the
-  *          stm32f4_discovery_accelerometer.c firmware driver.
+  * @version V4.0.1
+  * @date    21-July-2015
+  * @brief   This header file contains the functions prototypes for the gyroscope driver.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2015 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -34,55 +35,90 @@
   ******************************************************************************
   */
 
+
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F4_DISCOVERY_ACCELEROMETER_H
-#define __STM32F4_DISCOVERY_ACCELEROMETER_H
+#ifndef __GYRO_H
+#define __GYRO_H
 
 #ifdef __cplusplus
  extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4_discovery.h"
-
-/* Include Accelerometer component drivers */
-#include "../Components/lis3dsh/lis3dsh.h"
+#include <stdint.h>
 
 /** @addtogroup BSP
   * @{
   */
 
-/** @addtogroup STM32F4_DISCOVERY
+/** @addtogroup Components
   * @{
   */
 
-/** @addtogroup STM32F4_DISCOVERY_ACCELEROMETER
+/** @addtogroup GYRO
   * @{
   */
 
-/** @defgroup STM32F4_DISCOVERY_ACCELEROMETER_Exported_Types STM32F4 DISCOVERY ACCELEROMETER Exported Types
+/** @defgroup GYRO_Exported_Types
   * @{
   */
-typedef enum
+
+/** @defgroup GYRO_Driver_structure  Gyroscope Driver structure
+  * @{
+  */
+typedef struct
 {
-    ACCELERO_OK = 0,
-    ACCELERO_ERROR = 1,
-    ACCELERO_TIMEOUT = 2
-} ACCELERO_StatusTypeDef;
+  void       (*Init)(uint16_t);
+  void       (*DeInit)(void);
+  uint8_t    (*ReadID)(void);
+  void       (*Reset)(void);
+  void       (*LowPower)(uint16_t);
+  void       (*ConfigIT)(uint16_t);
+  void       (*EnableIT)(uint8_t);
+  void       (*DisableIT)(uint8_t);
+  uint8_t    (*ITStatus)(uint16_t, uint16_t);
+  void       (*ClearIT)(uint16_t, uint16_t);
+  void       (*FilterConfig)(uint8_t);
+  void       (*FilterCmd)(uint8_t);
+  void       (*GetXYZ)(float *);
+}GYRO_DrvTypeDef;
 /**
   * @}
   */
 
-/** @defgroup STM32F4_DISCOVERY_ACCELEROMETER_Exported_Functions STM32F4 DISCOVERY ACCELEROMETER Exported Functions
+/** @defgroup GYRO_Config_structure  Gyroscope Configuration structure
   * @{
   */
-/* Accelerometer functions */
-uint8_t BSP_ACCELERO_Init(void);
-uint8_t BSP_ACCELERO_ReadID(void);
-void    BSP_ACCELERO_Reset(void);
-void    BSP_ACCELERO_Click_ITConfig(void);
-void    BSP_ACCELERO_Click_ITClear(void);
-void    BSP_ACCELERO_GetXYZ(int16_t *pDataXYZ);
+
+typedef struct
+{
+  uint8_t Power_Mode;                         /* Power-down/Sleep/Normal Mode */
+  uint8_t Output_DataRate;                    /* OUT data rate */
+  uint8_t Axes_Enable;                        /* Axes enable */
+  uint8_t Band_Width;                         /* Bandwidth selection */
+  uint8_t BlockData_Update;                   /* Block Data Update */
+  uint8_t Endianness;                         /* Endian Data selection */
+  uint8_t Full_Scale;                         /* Full Scale selection */
+}GYRO_InitTypeDef;
+
+/* GYRO High Pass Filter struct */
+typedef struct
+{
+  uint8_t HighPassFilter_Mode_Selection;      /* Internal filter mode */
+  uint8_t HighPassFilter_CutOff_Frequency;    /* High pass filter cut-off frequency */
+}GYRO_FilterConfigTypeDef;
+
+/*GYRO Interrupt struct */
+typedef struct
+{
+  uint8_t Latch_Request;                      /* Latch interrupt request into CLICK_SRC register */
+  uint8_t Interrupt_Axes;                     /* X, Y, Z Axes Interrupts */
+  uint8_t Interrupt_ActiveEdge;               /* Interrupt Active edge */
+}GYRO_InterruptConfigTypeDef;
+
+/**
+  * @}
+  */
 
 /**
   * @}
@@ -104,6 +140,6 @@ void    BSP_ACCELERO_GetXYZ(int16_t *pDataXYZ);
 }
 #endif
 
-#endif /* __STM32F4_DISCOVERY_ACCELEROMETER_H */
+#endif /* __GYRO_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

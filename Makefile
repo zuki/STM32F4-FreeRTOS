@@ -19,6 +19,9 @@ INCLUDE+=-I$(FREERTOS)/portable/GCC/ARM_CM4F
 INCLUDE+=-I$(CURDIR)/Libraries/CMSIS/Device/ST/STM32F4xx/Include
 INCLUDE+=-I$(CURDIR)/Libraries/CMSIS/Include
 INCLUDE+=-I$(CURDIR)/Libraries/STM32F4xx_HAL_Driver/Inc
+INCLUDE+=-I$(CURDIR)/Libraries/BSP/Components/Common
+INCLUDE+=-I$(CURDIR)/Libraries/BSP/Components/cs43l22
+INCLUDE+=-I$(CURDIR)/Libraries/BSP/Components/lis3dsh
 INCLUDE+=-I$(CURDIR)/Libraries/BSP/STM32F4-Discovery
 
 
@@ -29,7 +32,9 @@ BIN_DIR = $(CURDIR)/binary
 # 書き込むためにvpathを使用する
 vpath %.c $(CURDIR)/Libraries/STM32F4xx_HAL_Driver/Src \
 	$(CURDIR)/Libraries/syscall $(CURDIR)/src $(FREERTOS) \
-	$(FREERTOS)/portable/MemMang $(FREERTOS)/portable/GCC/ARM_CM4F 
+	$(FREERTOS)/portable/MemMang $(FREERTOS)/portable/GCC/ARM_CM4F \
+  $(CURDIR)/Libraries/BSP/Components/Common $(CURDIR)/Libraries/BSP/Components/lis3dsh \
+  $(CURDIR)/Libraries/BSP/STM32F4-Discovery
 
 vpath %.s $(STARTUP)
 ASRC=startup_stm32f407xx.s
@@ -40,6 +45,9 @@ SRC+=system_stm32f4xx.c
 SRC+=stm32f4xx_hal_msp.c
 SRC+=main.c
 SRC+=syscalls.c
+SRC+=lis3dsh.c
+SRC+=stm32f4_discovery_accelerometer.c
+SRC+=stm32f4_discovery.c
 
 # FreeRTOS Source Files
 SRC+=port.c

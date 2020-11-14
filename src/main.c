@@ -35,8 +35,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "stm32f4xx.h"
 #include "stm32f4_discovery.h"
+#include "stm32f4_discovery_accelerometer.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include <stdio.h>
@@ -44,12 +44,18 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
+#define ABS(x)         (x < 0) ? (-x) : x
 /* Private variables ---------------------------------------------------------*/
 TaskHandle_t pvTask1Handle;
 TaskHandle_t pvTask2Handle;
 UART_HandleTypeDef huart2;
 
-//uint32_t interval = 1000;
+/* Init af threshold to detect acceleration on MEMS */
+/* Typical value:
+      - No  acceleration: X, Y inferior to 100 (positive or negative)
+      - Max acceleration: X, Y around 2000 (positive or negative) */
+int16_t ThresholdHigh = 200;
+int16_t ThresholdLow = -200;
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 static void MX_USART2_UART_Init(void);
@@ -93,11 +99,16 @@ int main(void)
 
     /* Configure the system clock to 168 MHz */
     SystemClock_Config();
-    //MX_GPIO_Init();
+    // LEDの初期化
     BSP_LED_Init(LED4);
     BSP_LED_Init(LED3);
     BSP_LED_Init(LED5);
     BSP_LED_Init(LED6);
+    // lis3dshの初期化
+    if (BSP_ACCELERO_Init() != HAL_OK) {
+        Error_Handler();
+    };
+
     MX_USART2_UART_Init();
 
     /* Add your application code here */
@@ -190,13 +201,48 @@ static void SystemClock_Config(void)
 void pvTask1Func(void * argument)
 {
     /* USER CODE BEGIN 5 */
+    int16_t buffer[3] = {0};
+    int16_t xval, yval = 0x00;
+
     printf("task1 start\r\n");
-    /* Infinite loop */
-    for(;;)
-    {
-        BSP_LED_Toggle(LED5);
-        //printf("task1 run\r\n");
-        vTaskDelay(1000/portTICK_RATE_MS);
+
+    for(;;) {
+
+        /* Read Acceleration */
+        BSP_ACCELERO_GetXYZ(buffer);
+
+        xval = buffer[0];
+        yval = buffer[1];
+        //printf("x: %d, y: %d\r\n", xval, yval);
+        if ((ABS(xval)) > (ABS(yval))) {
+            if (xval > ThresholdHigh) {
+                /* LED5 On */
+                BSP_LED_On(LED5);
+                vTaskDelay(100/portTICK_RATE_MS);
+            } else if (xval < ThresholdLow) {
+                /* LED4 On */
+                BSP_LED_On(LED4);
+                vTaskDelay(100/portTICK_RATE_MS);
+            } else {
+                vTaskDelay(100/portTICK_RATE_MS);
+            }
+        } else {
+            if (yval < ThresholdLow) {
+                /* LED6 On */
+                BSP_LED_On(LED6);
+                vTaskDelay(100/portTICK_RATE_MS);
+            } else if (yval > ThresholdHigh) {
+                /* LED3 On */
+                BSP_LED_On(LED3);
+                vTaskDelay(100/portTICK_RATE_MS);
+            } else {
+                vTaskDelay(100/portTICK_RATE_MS);
+            }
+        }
+        BSP_LED_Off(LED3);
+        BSP_LED_Off(LED4);
+        BSP_LED_Off(LED5);
+        BSP_LED_Off(LED6);
     }
     /* USER CODE END 5 */
 }
@@ -208,9 +254,9 @@ void pvTask2Func(void * argument)
     /* Infinite loop */
     for(;;)
     {
-        BSP_LED_Toggle(LED4);
+        //BSP_LED_Toggle(LED4);
         //printf("task2 run\r\n");
-        vTaskDelay(500/portTICK_RATE_MS);
+        //vTaskDelay(500/portTICK_RATE_MS);
     }
     /* USER CODE END 5 */
 }
